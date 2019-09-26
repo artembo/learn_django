@@ -72,7 +72,19 @@ django-admin startproject learn_django .
 ```bash
 ./manage.py runserver
 ```
-После запуска этой команды можно зайти в любом браузере на http://localhost:8000
+```bash
+(venv) learn_django user$ ./manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 26, 2019 - 07:31:03
+Django version 2.2.5, using settings 'learn_django.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+```
+
+После запуска этой команды можно зайти в любом браузере на http://127.0.0.1:8000
 Если вы видете надпись "The install worked successfuly! Congratulations!", то
 установка прошла успешно, можно приступать к следующим шагам.
 
@@ -134,13 +146,12 @@ templates/base.html
 </head>
 <style>
     .main-wrapper {
-        max-width: 1080px;
-        margin: 0 auto;
+        width: 100%;
     }
     .main-container {
-        width: 100%;
+        margin: 0 auto;
+        max-width: 400px;
         padding-top: 100px;
-        text-align: center;
     }
 </style>
 <body>
@@ -166,12 +177,228 @@ base.html и firstapp.html очень похожи на простые html-фа
 Единственное отличие — наличие тегов Django Template Language или 
 DTL. Тег ``{% block content %}`` в шаблоне base.html дает 
 возможность поместить в него содержимое, если данный шаблон 
-будет использоваться для расширения другого. В нашем случае 
+будет использоваться для расширения другого. 
+
+В нашем случае 
 шаблон firstapp.html расширяет шаблон base.html. Делается 
 это с помощью тега ``{% extends 'base.html' %}``, далее 
 содержимое блока ``{% block content %}`` помещается в 
-соответствующий блок base.html. В более сложных проектов может 
-быть несколько вложенных шаблонов, расширяемых друг друга.
+соответствующий блок base.html. 
+
+В более сложных проектах может быть несколько вложенных 
+шаблонов, расширяемых последовательно. В шаблонах DTL 
+может быть любое количество расширяемых блоков.
+
 Для включения html-кода в шаблон используется тег 
-``{% include 'template_name.html' %}``  
+``{% include 'template_name.html' %}``, eго мы будем использовать в 
+слудующих уроках.
+
+3.7. firstapp/views.py
+
+В Django view (Вью, редко — представление) — это модуль, который получает 
+http запрос (request) и выдает ответ (response). Запрос на сервер
+происходит каждый раз, когда вы набираете адрес сайта и нажимаете
+enter, когда кликаете мышкой по ссылке и тд. Запрос включает в 
+себя инфонмацию о пользователе, версию браузера, адрес откуда 
+исходит запрос и многое другое, что можно использовать во view
+при формировании ответа.
+
+В простом случае, как описанов в коде ниже, происходит 
+отправка шаблона, который мы сделали ранее на любой запрос.
+
+```python
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'firstapp.html')
+
+```
+
+3.8. firstapp/urls.py
+Осталось соединить сам путь нашей первой странички с view.
+За это отвечает файл urls.py, а точнее переменная *urlpatterns*
+в нем. Она хранит в себе список путей (path), которые "соединяют"
+путь на нашем сервере с view.
+
+```python
+from django.urls import path
+
+from firstapp.views import index
+
+urlpatterns = [
+    path('', index)
+]
+```
+
+Если мы посмотрим в папку learn_django, то там уже будет
+файл urls.py, созданный автоматически командой (3.1). 
+Это входная точка для всех *путей* проекта, на что
+указывает специальная переменная в файле настроек 
+learn_django/settings.py ``ROOT_URLCONF = 'learn_django.urls'``
+
+Модифицируем файл `learn_django/urls.py` таким образом,
+чтобы он включал в себя созданный нами `firstapp/urls.py`
+
+3.8.1 learn_django/urls.py
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('firstapp.urls'))
+]
+
+```
+
+Теперь круг замкнулся. Пользователь в браузере пишет путь, 
+который соответствует **path** в `urls.py`, **path** направляет
+запрос пользователя на view ``def index(request):``,
+эта view рендерит и отправляет обратно html, взятый из 
+двух DTL файлов: `base.html` и `firstapp.html`
+
+3.8. Запустим сервер разработки Django еще раз и проверим
+```bash
+./manage.py runserver
+```
+
+4.1. Модели.
+Пока все слишком просто и не хватает динамики в проекте.
+
+Для хранения инфирмации в бд Django использует собственный
+механизм абстракций, называемы моделями. При проектировании 
+приложения (сайта, программы и тд) в современной практике 
+используют ООП, согласно которому *модель сопоставляется с
+объектом в реальной жизни рассматриваемой проедметной области*.
+
+Рассмотрим простую базу данных с людьми и их контактами:
+
+Какими свойствами обладает человек? Пусть у нашего человека
+в БД будет три параметра:
+
+**Человек**
+* Имя
+* День рождения
+* Пол
+
+Какими свойствами обладает контакт человека?
+
+**Контакт**
+* Название (Телеграм, VK, Почта, LinkedIn и тд)
+* Путь
+* Человек (Любой контакт пренадлежит определенному человеку)
+
+Перенесем описание объектов БД (человек и его контакт) в 
+модели Django:
+
+firstapp/models.py
+```python
+from django.db import models
+
+
+class Person(models.Model):
+    fio = models.CharField('ФИО', max_length=100)
+    birthday = models.DateField('День рождения')
+    gender = models.BooleanField('Пол', default=True)
+
+    def __str__(self):
+        return '{} {}'.format(self.fio, self.gender)
+
+
+class Contact(models.Model):
+    person = models.ForeignKey('firstapp.Person', models.CASCADE, related_name='contacts')
+    service = models.CharField('Сервис', max_length=100)
+    link = models.CharField('Ссылка', max_length=200)
+
+    def __str__(self):
+        return '{}: {}'.format(self.service, self.link)
+```
+
+Метод модели `def __str__(self):` служит для удобного 
+отображения экземпляра модели, например, в админ. панели Django
+
+Зарегистрируем модели в админке:
+
+firstapp/admin.py
+```python
+from django.contrib import admin
+
+from firstapp.models import Person, Contact
+
+admin.site.register(Person)
+admin.site.register(Contact)
+```
+
+Обратим внимание на листинг 3.8.1. В нем содержится путь 
+``path('admin/', admin.site.urls)`` а значит, можно зайти
+в браузере по адресу http://127.0.0.1:8000/admin/
+
+Вы попадете на страницу авторизации пользователей Django 
+
+Создать первого и самого влиятельного пользователя в проекте
+можно командой:
+
+```bash
+./manage.py createsuperuser
+```
+
+После успешного создания пользователя можно авторизоваться
+и добавить неслолько человек и их контактов через 
+административную панель Django.
+
+4.2 Модификация view и шаблона для демонстрации людей и их 
+контактов на сайте.
+
+Передадим в шаблон всех людей через контекст.
+
+Контекст — это python словарь, содержащий данные, используемые
+в шаблоне.
+
+Изучите изменения в листингах ниже, внесите соответствующие
+изменения, после чего проследите как изменилась страница
+со списком людей и их контактов http://127.0.0.1:8000
+
+firstapp/views.py
+```python
+from django.shortcuts import render
+
+from firstapp.models import Person
+
+
+def index(request):
+    people = Person.objects.all()
+    context = {
+        'people': people
+    }
+    return render(request, 'firstapp.html', context)
+
+```
+
+templates/firstapp 
+```djangotemplate
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Учим Django Вместе!</h1>
+
+        {% for person in people %}
+            <h2>{{ person.fio }}</h2>
+            <h3>Пол: {% if person.gender %}мужской{% else %}женский{% endif %}</h3>
+            <h3>Дата рождения: {{ person.birthday }}</h3>
+            <ul>
+                {% for contact in person.contacts.all %}
+                    <li><strong>{{ contact.service }}: </strong><span>{{ contact.link }}</span></li>
+                {% empty %}
+                    <li>{{ person.fio }} контактов немеет</li>
+                {% endfor %}
+            </ul><br>
+
+            {% if not forloop.last %}
+                <hr>
+            {% endif %}
+
+        {% endfor %}
+{% endblock %}
+```
 
