@@ -11,7 +11,7 @@
                 {% for contact in person.contacts.all %}
                     <li><strong>{{ contact.service }}: </strong><span>{{ contact.link }}</span></li>
                 {% empty %}
-                    <li>{{ person.fio }} контактов немеет</li>
+                    <li>{{ person.fio }} контактов не имеет</li>
                 {% endfor %}
             </ul><br>
 

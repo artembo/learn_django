@@ -16,4 +16,4 @@ class Contact(models.Model):
     link = models.CharField('Ссылка', max_length=200)
 
     def __str__(self):
-        return '{}: {}'.format(self.service, self.link)
+        return '{} {}: {}'.format(self.person.fio, self.service, self.link)
