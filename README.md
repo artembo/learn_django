@@ -409,6 +409,13 @@ admin.site.register(Person)
 admin.site.register(Contact)
 ```
 
+После создания и подготовки сущностей необходимо произвести миграцию БД для добавления новых таблиц:
+
+```bash
+./manage.py makemigrations
+./manage.py migrate
+```
+
 Обратим внимание на листинг 3.8.1. В нем содержится путь 
 ``path('admin/', admin.site.urls)`` а значит, можно зайти
 в браузере по адресу http://127.0.0.1:8000/admin/
