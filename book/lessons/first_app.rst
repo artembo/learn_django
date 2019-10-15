@@ -1,7 +1,8 @@
 Веб-разработка Python/Djangо. Workshop 1.
 =========================================
 
-.. contents::
+.. contents:: Содержание занятия
+    :depth: 2
 
 1. Начало работы
 ----------------
@@ -574,3 +575,12 @@ templates/firstapp
 
            {% endfor %}
    {% endblock %}
+
+
+..
+TODO: Доделать итог занятия
+..
+
+Результат работы можно увидеть `здесь <https://github.com/artembo/learn_django/tree/1.First_django_app>`__
+Используйте команду ``git clone -b 1.First_django_app https://github.com/artembo/learn_django.git`` чтобы склонировать
+результат занятия на свою локальную машину.
