@@ -13,5 +13,7 @@ Django Framework. Уже после прохождения первого зан
 принципы построения djagno-приложений и сможете самостоятельно продолжить
 изучение.
 
-[Занятие №1](https://github.com/artembo/learn_django/blob/book/lessons/first_app.rst): создаем первое Django-приложение
-[Занятие №2](https://github.com/artembo/learn_django/blob/book/lessons/extended_and_optimized_app.rst): создаем первое Django-приложение
+* [Занятие №1](https://github.com/artembo/learn_django/blob/master/book/lessons/first_app.rst): 
+создаем первое Django-приложение
+* [Занятие №2](https://github.com/artembo/learn_django/blob/master/book/lessons/extended_and_optimized_app.rst): 
+оптимизация и расширение возможностей Django-приложения
