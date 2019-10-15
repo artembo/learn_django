@@ -1,4 +1,4 @@
-# Веб-разработка Python/Djangо
+# Веб-разработка Python/Djangо. Workshop 1.
 
 Содержание занятия:
 * [Начало работы](#1-начало-работы)
@@ -22,6 +22,36 @@ Python, позволяющий быстро создавать проекты л
 mkdir learn_django
 cd learn_django
 ```
+
+Наша итоговая цель — создать такую структуру проекта внутри папки learn_django:
+```bash
+.
+└── learn_django
+    ├── db.sqlite3
+    ├── firstapp
+    │   ├── migrations
+    │   ├── __init__.py
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── models.py
+    │   ├── tests.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── learn_django
+    │   ├── __init__.py
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
+    ├── manage.py
+    ├── requirements.txt
+    ├── templates
+    │   ├── base.html
+    │   ├── firstapp.html
+    └── venv
+```
+Все последующие команды будут выполняться в созданной ранее папке 
+проекта ``learn_django``, тогда вы получите к концу урока файловую 
+структуру как в листинге выше.
 
 ## 2. pip и virtualenv
 
