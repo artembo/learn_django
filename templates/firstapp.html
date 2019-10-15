@@ -1,23 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Учим Django Вместе!</h1>
+
+      <div class="row">
 
         {% for person in people %}
-            <h2>{{ person.fio }}</h2>
-            <h3>Пол: {% if person.gender %}мужской{% else %}женский{% endif %}</h3>
-            <h3>Дата рождения: {{ person.birthday }}</h3>
-            <ul>
-                {% for contact in person.contacts.all %}
-                    <li><strong>{{ contact.service }}: </strong><span>{{ contact.link }}</span></li>
-                {% empty %}
-                    <li>{{ person.fio }} контактов не имеет</li>
-                {% endfor %}
-            </ul><br>
-
-            {% if not forloop.last %}
-                <hr>
-            {% endif %}
-
+            {% include 'contact_card.html' %}
         {% endfor %}
+
+      </div>
+
 {% endblock %}
