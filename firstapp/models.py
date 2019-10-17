@@ -6,9 +6,6 @@ class Person(models.Model):
     birthday = models.DateField('День рождения')
     gender = models.BooleanField('Пол', default=True)
 
-    def get_contacts(self):
-        return self.contacts.all()
-
     def __str__(self):
         gender = '(М)' if self.gender else '(Ж)'
         return '{} {}'.format(self.fio, gender)

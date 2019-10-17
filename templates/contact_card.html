@@ -7,19 +7,12 @@
       <p class="card-text">Пол: {% if person.gender %}мужской{% else %}женский{% endif %}</p>
       <p class="card-text">Дата рождения: {{ person.birthday }}</p>
       <ul>
-        {% for contact in person.get_contacts %}
+        {% for contact in person.contacts.all %}
             <li><strong>{{ contact.service }}: </strong><span>{{ contact.link }}</span></li>
         {% empty %}
             <li>{{ person.fio }} контактов не имеет</li>
         {% endfor %}
       </ul>
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-          <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-        </div>
-        <small class="text-muted">9 mins</small>
-      </div>
     </div>
   </div>
 </div>
