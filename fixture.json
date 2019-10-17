@@ -1,0 +1,83 @@
+[
+{
+    "model": "firstapp.person",
+    "pk": 1,
+    "fields": {
+        "fio": "\u0418\u0432\u0430\u043d\u043e\u0432 \u0418\u0432\u0430\u043d \u0418\u0432\u0430\u043d\u043e\u0432\u0438\u0447",
+        "birthday": "1919-10-31",
+        "gender": true
+    }
+},
+{
+    "model": "firstapp.person",
+    "pk": 2,
+    "fields": {
+        "fio": "\u041f\u0435\u0442\u0440\u043e\u0432 \u041f\u0435\u0442\u0440 \u041f\u0435\u0442\u0440\u043e\u0432\u0438\u0447",
+        "birthday": "1929-10-31",
+        "gender": true
+    }
+},
+{
+    "model": "firstapp.person",
+    "pk": 3,
+    "fields": {
+        "fio": "\u0421\u0438\u0434\u043e\u0440\u043e\u0432 \u0421\u0438\u0434\u043e\u0440 \u0421\u0438\u0434\u043e\u0440\u043e\u0432\u0438\u0447",
+        "birthday": "1939-10-31",
+        "gender": true
+    }
+},
+{
+    "model": "firstapp.contact",
+    "pk": 1,
+    "fields": {
+        "person": 1,
+        "service": "vk",
+        "link": "https://vk.com"
+    }
+},
+{
+    "model": "firstapp.contact",
+    "pk": 2,
+    "fields": {
+        "person": 1,
+        "service": "Ok",
+        "link": "https://ok.ru"
+    }
+},
+{
+    "model": "firstapp.contact",
+    "pk": 3,
+    "fields": {
+        "person": 2,
+        "service": "telegram",
+        "link": "@petrov"
+    }
+},
+{
+    "model": "firstapp.contact",
+    "pk": 4,
+    "fields": {
+        "person": 2,
+        "service": "vk",
+        "link": "https://vk.com/"
+    }
+},
+{
+    "model": "firstapp.contact",
+    "pk": 5,
+    "fields": {
+        "person": 3,
+        "service": "Ok",
+        "link": "https://ok.ru"
+    }
+},
+{
+    "model": "firstapp.contact",
+    "pk": 6,
+    "fields": {
+        "person": 3,
+        "service": "telegram",
+        "link": "@sidorov"
+    }
+}
+]
