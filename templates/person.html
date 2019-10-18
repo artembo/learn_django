@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {{ person }}
 
     {% include 'contact_card.html' %}
 
     <form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Добавить">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Добавить">
     </form>
 
 {% endblock %}

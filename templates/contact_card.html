@@ -2,7 +2,7 @@
   <div class="card mb-4 shadow-sm">
     <div class="card-body">
       <div class="card-title">
-          {{ person.fio }}
+          <a href="{% url 'person' person.pk %}">{{ person.fio }}</a>
       </div>
       <p class="card-text">Пол: {% if person.gender %}мужской{% else %}женский{% endif %}</p>
       <p class="card-text">Дата рождения: {{ person.birthday }}</p>
@@ -13,13 +13,6 @@
             <li>{{ person.fio }} контактов не имеет</li>
         {% endfor %}
       </ul>
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-          <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-        </div>
-        <small class="text-muted">9 mins</small>
-      </div>
     </div>
   </div>
 </div>
