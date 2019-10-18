@@ -13,11 +13,11 @@ Git — это система контроля версий проекта.
 
 .. code:: bash
 
-   git clone -b lesson-02 https://github.com/artembo/learn_django.git learn_django_02
+   git clone -b lesson-02-initial https://github.com/artembo/learn_django.git learn_django_02
 
 -  зайдите в папку ``learn_django_02`` — это репозиторий с проектом, вся
    работа по его
-   `созданию <https://github.com/artembo/learn_django/blob/master/book/lessons/lesson-02.rst>`__
+   `созданию <https://github.com/artembo/learn_django/blob/master/book/lessons/lesson-01.rst>`__
    уже выполнена, осталось сделать несколько простых шагов, чтобы
    запустить его.
 
@@ -59,15 +59,20 @@ Git — это система контроля версий проекта.
    результат работы приложения
 
 
-2 Расширяем возможности приложения
-----------------------------------
+2. Расширяем возможности приложения
+-----------------------------------
 
 На данный момент возможности нашего проекта сильно ограничены. Мы можем
 добавить контакты только через админ. панель Django. Также мы можем видеть
-только весь список контактов на.
+только весь список контактов на главной (корневой) странице.
 
 Сделаем отдельную страницу, на которой будет отображаться контакты только
-одного конкретного человека.
+одного конкретного человека, которая будет иметь вид
+``http://127.0.0.1:8000/person/<pk>/``, где pk — это Primary Key (id) экземпляра
+Person, то есть записи о человеке в БД.
+
+2.1 Добавляем новую страницу
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Модели изменять не будем. Остается добавить 3 компонента приложения:
 
@@ -128,7 +133,8 @@ firstapp/urls.py
 Теперь на страницу персональную страницу можно зайти кликнув на имя
 человека в списке
 
-Добавим форму добавления контакта человека
+2.2. Форома добавления контакта человека
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Что для этого нужно?
 
@@ -258,7 +264,6 @@ learn_django/settings.py
 .. code:: python
 
     INSTALLED_APPS = [
-        'registration',
         'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
@@ -283,6 +288,28 @@ learn_django/settings.py
     INTERNAL_IPS = [
         '127.0.0.1',
     ]
+
+learn_django/urls.py
+
+.. code:: python
+
+    from django.conf import settings
+    from django.conf.urls.static import static
+    from django.contrib import admin
+    from django.urls import path, include, re_path
+
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('', include('firstapp.urls'))
+    ]
+
+    if settings.DEBUG:
+        urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+        import debug_toolbar
+        urlpatterns = [
+            path('__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns
+
 
 Оптимизируем модель и шаблон:
 
@@ -329,3 +356,30 @@ firstapp/views.py
         queryset = Person.objects.prefetch_related('contacts')  # <- оптимизированный запрос
         template_name = 'firstapp.html'
         context_object_name = 'people'
+
+4. Регистрация пользователей
+----------------------------
+
+4.1 Установка django-registration-redux
+
+.. code:: bash
+
+    pip install django-registration-redux
+
+learn_django/urls.py
+
+.. code:: python
+
+    ...
+    from django.urls import path, include, re_path
+
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        re_path(r'^accounts/', include('registration.backends.default.urls')),
+        path('', include('firstapp.urls'))
+    ]
+    ...
+
+.. code:: bash
+
+    ./manage.py migrate
