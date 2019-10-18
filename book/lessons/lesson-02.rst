@@ -22,7 +22,7 @@ Git — это система контроля версий проекта.
    запустить его.
 
 -  создайте виртуальное окружение, активируйте его и установите пакеты,
-   необходимы для запуска приложения из requirements.txt
+   необходимые для запуска приложения из requirements.txt
 
 .. code:: bash
 
@@ -69,7 +69,7 @@ Git — это система контроля версий проекта.
 Сделаем отдельную страницу, на которой будет отображаться контакты только
 одного конкретного человека.
 
-Модели изменять не будем. Остается добавит 3 элемента:
+Модели изменять не будем. Остается добавить 3 компонента приложения:
 
 - template
 - view
@@ -202,6 +202,12 @@ firstapp/views.py
         }
         return render(request, 'person.html', context)
 
+3. Оптимизация приложения и запросов к БД
+-----------------------------------------
+
+3.1 Class-based views
+~~~~~~~~~~~~~~~~~~~~~
+
 firstapp/views.py
 
 .. code::
@@ -224,8 +230,21 @@ firstapp/views.py
     class ContactCreatedView(TemplateView):
         template_name = 'contact_successfully_added.html'
 
-3. Оптимизация приложения и запросов к БД
------------------------------------------
+firstapp/urls.py
+
+.. code:: python
+
+    from django.urls import path
+
+    from firstapp.views import index, person_view, ContactCreatedView, PersonContactCreateView, IndexView
+
+    urlpatterns = [
+        path('', IndexView.as_view(), name='index'),
+        # path('person/<pk>/', person_view, name='person'),
+        path('person/<pk>/', PersonContactCreateView.as_view(), name='person'),
+        path('person/contact/created/', ContactCreatedView.as_view(), name='contact_created'),
+    ]
+
 
 3.2 django-debug-toolbar
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -265,3 +284,48 @@ learn_django/settings.py
         '127.0.0.1',
     ]
 
+Оптимизируем модель и шаблон:
+
+.. code:: python
+
+    class Person(models.Model):
+        fio = models.CharField('ФИО', max_length=100)
+        birthday = models.DateField('День рождения')
+        gender = models.BooleanField('Пол', default=True)
+
+        def get_contacts(self):  # <- новый метод модели
+            return self.contacts.all()
+
+        def __str__(self):
+            gender = '(М)' if self.gender else '(Ж)'
+            return '{} {}'.format(self.fio, gender)
+
+.. code:: html
+
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <div class="card-title">
+              <a href="{% url 'person' person.pk %}">{{ person.fio }}</a>
+          </div>
+          <p class="card-text">Пол: {% if person.gender %}мужской{% else %}женский{% endif %}</p>
+          <p class="card-text">Дата рождения: {{ person.birthday }}</p>
+          <ul>
+            {% for contact in person.get_contacts %}  # <- вызываем метод модели вместо обращения к бд
+                <li><strong>{{ contact.service }}: </strong><span>{{ contact.link }}</span></li>
+            {% empty %}
+                <li>{{ person.fio }} контактов не имеет</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+firstapp/views.py
+
+.. code:: python
+
+    class IndexView(ListView):
+        queryset = Person.objects.prefetch_related('contacts')  # <- оптимизированный запрос
+        template_name = 'firstapp.html'
+        context_object_name = 'people'
